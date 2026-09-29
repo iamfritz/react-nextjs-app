@@ -1,20 +1,11 @@
 import Link from "next/link";
+import { getPageBySlug, getSiteData } from "@/lib/api";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
-
-async function getSiteData() {
-  try {
-    const response = await fetch(`${apiUrl}/site`, { cache: "no-store" });
-    if (!response.ok) {
-      return null;
-    }
-    return response.json();
-  } catch {
-    return null;
-  }
-}
+const DEFAULT_IMAGE =
+  "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80";
 
 export default async function HomePage() {
+  const page = await getPageBySlug("home");
   const site = await getSiteData();
   const features = site?.features || [
     "Fast Laravel backend services",
@@ -22,31 +13,39 @@ export default async function HomePage() {
     "Reusable content and blog structure",
     "Clean architecture for product teams",
   ];
-  const hero = site?.hero || {
-    title: "Power your next product with Laravel and Next.js.",
-    subtitle:
-      "A simple setup for building content-driven websites, business apps, and API-first experiences.",
-  };
+  const pageTitle =
+    page?.meta_fields?.hero_title ||
+    page?.title ||
+    "Power your next product with Laravel and Next.js.";
+  const pageContent =
+    page?.content ||
+    "<p>A simple setup for building content-driven websites, business apps, and API-first experiences.</p>";
 
   return (
     <main className="page-shell">
-      <nav className="top-nav">
-        <div className="brand">{site?.name || "Laravel AI"}</div>
-        <div className="nav-links">
-          <Link href="/">Home</Link>
-          <Link href="/about">About</Link>
-          <Link href="/blog">Blog</Link>
-        </div>
-      </nav>
-
       <section className="hero">
+        <div className="mb-6">
+          <img
+            src={page?.photo || DEFAULT_IMAGE}
+            alt={pageTitle}
+            className="block h-[420px] w-full rounded-[18px] object-cover"
+          />
+        </div>
+
         <div className="hero-copy">
           <p className="eyebrow">Full-stack starter</p>
-          <h1>{hero.title}</h1>
-          <p className="lead">{hero.subtitle}</p>
+          <h1>{pageTitle}</h1>
+          <div
+            className="lead"
+            dangerouslySetInnerHTML={{ __html: pageContent }}
+          />
           <div className="cta-row">
-            <Link href="/blog" className="primary-btn">View blog</Link>
-            <Link href="/about" className="secondary-btn">Learn more</Link>
+            <Link href="/blog" className="primary-btn">
+              View blog
+            </Link>
+            <Link href="/about" className="secondary-btn">
+              Learn more
+            </Link>
           </div>
         </div>
 
