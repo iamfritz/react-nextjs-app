@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { getProducts } from "@/lib/api";
+import {
+  getProductCategories,
+  getProducts,
+  getProductsByCategory,
+} from "@/lib/api";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=80";
@@ -7,15 +11,31 @@ const DEFAULT_IMAGE =
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ page?: string }> | { page?: string };
+  searchParams?:
+    | Promise<{ page?: string; category?: string }>
+    | { page?: string; category?: string };
 }) {
   const resolvedSearchParams = await Promise.resolve(searchParams ?? {});
   const currentPage = Number(resolvedSearchParams.page ?? "1") || 1;
-  const result = (await getProducts(currentPage)) || {
-    data: [],
-    current_page: 1,
-    last_page: 1,
-  };
+  const selectedCategory = resolvedSearchParams.category ?? "";
+  const categories = (await getProductCategories()) || [];
+  const result =
+    selectedCategory && selectedCategory !== "all"
+      ? (await getProductsByCategory(selectedCategory, currentPage)) || {
+          category: { name: "Category" },
+          data: [],
+          current_page: 1,
+          last_page: 1,
+        }
+      : (await getProducts(currentPage)) || {
+          data: [],
+          current_page: 1,
+          last_page: 1,
+        };
+
+  const activeCategoryName =
+    result.category?.name ||
+    (selectedCategory && selectedCategory !== "all" ? selectedCategory : "All");
 
   return (
     <main className="page-shell">
@@ -26,7 +46,34 @@ export default async function ProductsPage({
           className="mb-6 block h-[220px] w-full rounded-2xl object-cover md:h-[280px]"
         />
 
-        <h1 className="section-title">Products</h1>
+        <h1 className="section-title">
+          {selectedCategory && selectedCategory !== "all"
+            ? `${activeCategoryName} Products`
+            : "Products"}
+        </h1>
+
+        <div className="mb-6 flex flex-wrap gap-3">
+          <Link
+            href="/products"
+            className={`blog-category ${!selectedCategory || selectedCategory === "all" ? "active" : ""}`}
+          >
+            All
+          </Link>
+          {(categories || []).map((category: any) => {
+            const slug = category.slug || category.name;
+            const isActive = selectedCategory === slug;
+
+            return (
+              <Link
+                key={slug}
+                href={`/products?category=${encodeURIComponent(slug)}`}
+                className={`blog-category ${isActive ? "active" : ""}`}
+              >
+                {category.name}
+              </Link>
+            );
+          })}
+        </div>
 
         <div className="blog-grid">
           {result.data?.length ? (
@@ -72,8 +119,8 @@ export default async function ProductsPage({
             <Link
               href={
                 currentPage > 1
-                  ? `/products?page=${currentPage - 1}`
-                  : "/products"
+                  ? `/products${selectedCategory ? `?category=${encodeURIComponent(selectedCategory)}` : ""}${currentPage > 1 ? `${selectedCategory ? "&" : "?"}page=${currentPage - 1}` : ""}`
+                  : `/products${selectedCategory ? `?category=${encodeURIComponent(selectedCategory)}` : ""}`
               }
               className={`pagination-link ${currentPage === 1 ? "disabled" : ""}`}
               aria-disabled={currentPage === 1}
@@ -87,7 +134,7 @@ export default async function ProductsPage({
             ).map((pageNumber) => (
               <Link
                 key={pageNumber}
-                href={`/products?page=${pageNumber}`}
+                href={`/products${selectedCategory ? `?category=${encodeURIComponent(selectedCategory)}` : ""}${selectedCategory ? `&page=${pageNumber}` : `?page=${pageNumber}`}`}
                 className={`pagination-item ${pageNumber === currentPage ? "active" : ""}`}
               >
                 {pageNumber}
@@ -97,8 +144,8 @@ export default async function ProductsPage({
             <Link
               href={
                 currentPage < result.last_page
-                  ? `/products?page=${currentPage + 1}`
-                  : `/products?page=${result.last_page}`
+                  ? `/products${selectedCategory ? `?category=${encodeURIComponent(selectedCategory)}` : ""}${selectedCategory ? `&page=${currentPage + 1}` : `?page=${currentPage + 1}`}`
+                  : `/products${selectedCategory ? `?category=${encodeURIComponent(selectedCategory)}` : ""}${selectedCategory ? `&page=${result.last_page}` : `?page=${result.last_page}`}`
               }
               className={`pagination-link ${currentPage === result.last_page ? "disabled" : ""}`}
               aria-disabled={currentPage === result.last_page}
