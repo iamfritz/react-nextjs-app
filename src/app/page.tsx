@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { getPageBySlug, getSiteData } from "@/lib/api";
+import {
+  getBlogPosts,
+  getPageBySlug,
+  getProducts,
+  getSiteData,
+} from "@/lib/api";
+import { FeaturedProductSlider } from "@/components/FeaturedProductSlider";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80";
@@ -7,6 +13,11 @@ const DEFAULT_IMAGE =
 export default async function HomePage() {
   const page = await getPageBySlug("home");
   const site = await getSiteData();
+  const productsResult = (await getProducts(1)) || { data: [] };
+  const blogResult = (await getBlogPosts(1)) || { data: [] };
+  const featuredProducts = (productsResult.data || []).slice(0, 6);
+  const latestPosts = (blogResult.data || []).slice(0, 3);
+
   const features = site?.features || [
     "Fast Laravel backend services",
     "Modern Next.js frontend experience",
@@ -40,11 +51,11 @@ export default async function HomePage() {
             dangerouslySetInnerHTML={{ __html: pageContent }}
           />
           <div className="cta-row">
-            <Link href="/blog" className="primary-btn">
-              View blog
+            <Link href="/products" className="primary-btn">
+              View products
             </Link>
-            <Link href="/about" className="secondary-btn">
-              Learn more
+            <Link href="/blog" className="secondary-btn">
+              View blog
             </Link>
           </div>
         </div>
@@ -59,6 +70,63 @@ export default async function HomePage() {
               ))}
             </ul>
           </div>
+        </div>
+      </section>
+
+      <section className="section-block">
+        <div className="section-header">
+          <div>
+            <p className="section-kicker">Featured collection</p>
+            <h2 className="section-title-sm">Featured products</h2>
+          </div>
+          <Link href="/products" className="text-link">
+            View all products →
+          </Link>
+        </div>
+
+        <FeaturedProductSlider products={featuredProducts} />
+      </section>
+
+      <section className="section-block">
+        <div className="section-header">
+          <div>
+            <p className="section-kicker">Fresh ideas</p>
+            <h2 className="section-title-sm">Latest blog</h2>
+          </div>
+          <Link href="/blog" className="text-link">
+            Read all posts →
+          </Link>
+        </div>
+
+        <div className="latest-grid">
+          {latestPosts.length > 0 ? (
+            latestPosts.map((post: any) => (
+              <article key={post.id} className="listing-card">
+                <img
+                  src={post.photo || DEFAULT_IMAGE}
+                  alt={post.title}
+                  className="listing-image"
+                />
+                {post.category?.name ? (
+                  <span className="listing-tag">{post.category.name}</span>
+                ) : null}
+                <div className="listing-body">
+                  <h3>{post.title}</h3>
+                  <p>{post.excerpt}</p>
+                  <div className="listing-meta">
+                    <time className="muted-date">
+                      {post.published_at || "Recently"}
+                    </time>
+                    <Link href={`/blog/${post.slug}`} className="text-link">
+                      Read article
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))
+          ) : (
+            <p className="status-text">No blog posts available yet.</p>
+          )}
         </div>
       </section>
     </main>

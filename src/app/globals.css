@@ -131,6 +131,91 @@ body {
     @apply mb-5 text-3xl font-bold tracking-tight text-slate-900 md:text-5xl;
   }
 
+  .section-block {
+    @apply mt-12;
+  }
+
+  .section-header {
+    @apply mb-6 flex items-end justify-between gap-4;
+  }
+
+  .section-kicker {
+    @apply mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-600;
+  }
+
+  .section-title-sm {
+    @apply text-3xl font-bold tracking-tight text-slate-900;
+  }
+
+  .text-link {
+    @apply inline-flex items-center font-semibold text-blue-700 transition hover:text-blue-900;
+  }
+
+  .featured-slider-wrap {
+    @apply relative;
+  }
+
+  .featured-slider {
+    @apply flex gap-5 overflow-x-auto pb-3 scroll-smooth;
+    scrollbar-width: none;
+  }
+
+  .featured-slider::-webkit-scrollbar {
+    display: none;
+  }
+
+  .featured-slide {
+    @apply min-w-[280px] max-w-[280px] shrink-0;
+  }
+
+  .featured-slider-nav {
+    @apply absolute bottom-2 right-2 z-10 flex gap-2;
+  }
+
+  .slider-arrow {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-lg font-bold text-slate-800 shadow-md transition hover:border-blue-500 hover:text-blue-700;
+  }
+
+  .latest-grid {
+    @apply grid gap-5 md:grid-cols-3;
+  }
+
+  .listing-card {
+    @apply overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.08)];
+  }
+
+  .listing-image {
+    @apply block h-52 w-full object-cover;
+  }
+
+  .listing-tag {
+    @apply mb-3 mt-4 ml-5 inline-block rounded-full bg-blue-100 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-blue-900;
+  }
+
+  .listing-body {
+    @apply p-5 pt-0;
+  }
+
+  .listing-body h3 {
+    @apply mb-2 text-xl font-bold text-slate-900;
+  }
+
+  .listing-body p {
+    @apply leading-7 text-slate-600;
+  }
+
+  .listing-meta {
+    @apply mt-4 flex items-center justify-between gap-3;
+  }
+
+  .price-tag {
+    @apply inline-flex rounded-full bg-slate-900 px-3 py-1 text-sm font-bold text-white;
+  }
+
+  .muted-date {
+    @apply text-xs font-bold uppercase tracking-[0.08em] text-slate-500;
+  }
+
   .copy-block {
     @apply max-w-3xl leading-8 text-slate-600;
   }

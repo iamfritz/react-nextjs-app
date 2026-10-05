@@ -17,6 +17,9 @@ export default function SiteLayout({
             <Link href="/" className="transition hover:text-blue-700">
               Home
             </Link>
+            <Link href="/products" className="transition hover:text-blue-700">
+              Products
+            </Link>
             <Link href="/about" className="transition hover:text-blue-700">
               About
             </Link>
@@ -39,6 +42,9 @@ export default function SiteLayout({
           <div className="footer-links">
             <Link href="/" className="transition hover:text-blue-700">
               Home
+            </Link>
+            <Link href="/products" className="transition hover:text-blue-700">
+              Products
             </Link>
             <Link href="/about" className="transition hover:text-blue-700">
               About

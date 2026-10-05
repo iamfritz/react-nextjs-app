@@ -42,3 +42,27 @@ export async function getBlogPosts(page = 1) {
 export async function getCategoryPosts(slug: string, page = 1) {
   return fetchApi<any>(`/categories/${slug}/blog?page=${page}`);
 }
+
+export async function getProducts(page = 1) {
+  return fetchApi<any>(`/products?page=${page}`);
+}
+
+export async function getProductBySlug(slug: string) {
+  return fetchApi<any>(`/products/${slug}`);
+}
+
+export async function getProductsByCategory(slug: string, page = 1) {
+  return fetchApi<any>(`/products/category/${slug}?page=${page}`);
+}
+
+export async function getProductsByTag(tag: string, page = 1) {
+  return fetchApi<any>(`/products/tag/${encodeURIComponent(tag)}?page=${page}`);
+}
+
+export async function getProductCategories() {
+  return fetchApi<any>(`/product-categories`);
+}
+
+export async function getProductTags() {
+  return fetchApi<any>(`/product-tags`);
+}
